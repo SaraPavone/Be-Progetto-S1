@@ -55,7 +55,9 @@ public class Main {
                             System.out.println("Inserisci la durata: ");
                             durata = scan.nextInt();
                             scan.nextLine();
-                            elementi[i] = new RegistrazioneAudio(titolo, durata, volume);
+                            if (durata <= 0) {
+                                throw new IllegalArgumentException("Controlla la durata!");
+                            }
                             break;
                         } catch (IllegalArgumentException e) {
                             System.out.println(e.getMessage());
@@ -67,6 +69,9 @@ public class Main {
                             System.out.println("Inserisci il volume: ");
                             volume = scan.nextInt();
                             scan.nextLine();
+                            if (volume <= 0) {
+                                throw new IllegalArgumentException("Alza il volume!");
+                            }
                             elementi[i] = new RegistrazioneAudio(titolo, durata, volume);
                             break;
                         } catch (IllegalArgumentException e) {
@@ -86,38 +91,40 @@ public class Main {
                             System.out.println("Inserisci la durata: ");
                             durata = scan.nextInt();
                             scan.nextLine();
-                            elementi[i] = new Video(titolo, durata, volume, luminosita);
+                            if (durata <= 0) {
+                                throw new IllegalArgumentException("Controlla la durata!");
+                            }
                             break;
                         } catch (IllegalArgumentException e) {
                             System.out.println(e.getMessage());
                         }
                     }
-
 
                     while (true) {
                         try {
                             System.out.println("Inserisci il volume: ");
                             volume = scan.nextInt();
                             scan.nextLine();
-                            elementi[i] = new Video(titolo, durata, volume, luminosita);
+                            if (volume <= 0) {
+                                throw new IllegalArgumentException("Alza il volume!");
+                            }
                             break;
                         } catch (IllegalArgumentException e) {
                             System.out.println(e.getMessage());
                         }
                     }
-
-
                     while (true) {
                         try {
                             System.out.println("Inserisci la luminosità: ");
                             luminosita = scan.nextInt();
                             scan.nextLine();
-                            elementi[i] = new Video(titolo, durata, volume, luminosita);
+                            elementi[i] = new Video (titolo, durata, volume, luminosita);
                             break;
                         } catch (IllegalArgumentException e) {
                             System.out.println(e.getMessage());
                         }
                     }
+
                     break;
 
                 default:
@@ -133,11 +140,52 @@ public class Main {
             scelta = scan.nextInt();
             if (scelta > 0 && scelta <= 5) {
                 ElementoMultimediale el = elementi [scelta - 1];
-                if ( el instanceof Immagine) {
-                    ((Immagine) el).show() ;
-                } else if (el instanceof Riproduci)
+
+                if (el instanceof Riproduci) {
+                    while (true) {
+                        System.out.println("Vuoi modificare il volume prima di riprodurre? (1: Alza Volume, 2: Abbassa Volume, 3: Riproduci, 0: Annulla): ");
+
+                        if (el instanceof Video) {
+                            System.out.println("4: Aumenta Luminosità, 5: Abbassa Luminosità");
+                        }
+                        if (el instanceof Immagine) {
+                            System.out.println("6: Aumenta Luminosità, 7: Abbassa Luminosità");
+                        }
+
+                        int azione = scan.nextInt();
+
+                if (azione == 0) {
+                    break;
+                } else if (azione == 1) {
+                    if (el instanceof Video) {
+                        ((Video) el).alzaVolume();
+                    } else if (el instanceof RegistrazioneAudio) {
+                        ((RegistrazioneAudio) el).alzaVolume();
+                    }
+                } else if (azione == 2) {
+                    if (el instanceof Video) {
+                        ((Video) el).abbassaVolume();
+                    } else if (el instanceof RegistrazioneAudio) {
+                        ((RegistrazioneAudio) el).abbassaVolume();
+                    }
+                } else if (azione == 3) {
                     ((Riproduci) el).play();
-            }
+                    break;
+                } else if (azione == 4 && el instanceof Video) {
+                    ((Video) el).aumentaLum();
+                } else if (azione == 5 && el instanceof Video) {
+                    ((Video) el).abbassaLum();
+                } else {
+                    System.out.println("Azione non valida.");
+                }
+                    }
+
+        } else if (el instanceof Immagine) {
+            ((Immagine) el).show();
+        }
+
+    }
+
         } while (scelta != 0);
 
         scan.close();
